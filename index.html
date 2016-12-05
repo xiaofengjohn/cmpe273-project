@@ -21,14 +21,41 @@
 		  <el-col :span="8">
 		  	<div class="left-content content" style="position: relative;">
 		  		<div>
-		  			<el-input
-					    class="inline-input"
-					    size="small"
-					    placeholder="address"
-					    style="padding: 10px 10px 10px 10px; position: absolute; top: 0px; left: 0px">
-					    <el-button slot="append" icon="search"></el-button>	
-					</el-input>
-					<div class="list-container">
+		  			<div style="padding: 10px 10px 10px 10px; position: absolute; top: 0px; left: 0px">
+		  				<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="name" 
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						</el-input>
+						<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="zip"
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						</el-input>
+						<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="city"
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						</el-input>
+						<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="state"
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						</el-input>
+						<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="address"
+						    style="width: 210px; margin: 0px 10px 10px 0px; float: left;">
+						    <el-button slot="append" icon="search"></el-button>	
+						</el-input>
+		  			</div>
+		  			
+					<div class="list-container" style="margin-top: 100px; max-height: 250px;">
 						<div class="list">123</div>
 						<div class="list">123</div>
 						<div class="list">123</div>
@@ -213,6 +240,7 @@
 		padding: 10px 10px 10px 10px;
 		border: 1px solid #eaeefb;
 		font-size: 16px;
+		overflow: hidden;
 	  }
 
 	  .list:hover {
