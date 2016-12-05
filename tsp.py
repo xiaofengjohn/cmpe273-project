@@ -36,7 +36,7 @@ class TSP:
             self.initstoreMap()  
             self.DP(self.length - 2)
             finish = clock()
-            print("running time: " + str(finish-start))
+   #         print("TSP functions running time: " + str(finish-start) + "seconds")
             
     def check(self, dArray):  
         if (len(dArray) < 3):  
