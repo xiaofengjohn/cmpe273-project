@@ -26,32 +26,37 @@
 						    class="inline-input"
 						    size="small"
 						    placeholder="name" 
-						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;"
+						    v-model="inputLocation.name">
 						</el-input>
 						<el-input
 						    class="inline-input"
 						    size="small"
 						    placeholder="zip"
-						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;"
+						    v-model="inputLocation.zip">
 						</el-input>
 						<el-input
 						    class="inline-input"
 						    size="small"
 						    placeholder="city"
-						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;"
+						    v-model="inputLocation.city">
 						</el-input>
 						<el-input
 						    class="inline-input"
 						    size="small"
 						    placeholder="state"
-						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;"
+						    v-model="inputLocation.state">
 						</el-input>
 						<el-input
 						    class="inline-input"
 						    size="small"
 						    placeholder="address"
-						    style="width: 210px; margin: 0px 10px 10px 0px; float: left;">
-						    <el-button slot="append" icon="search"></el-button>	
+						    style="width: 210px; margin: 0px 10px 10px 0px; float: left;"
+						    v-model="inputLocation.address">
+						    <el-button slot="append" icon="search" @click="addLocation"></el-button>	
 						</el-input>
 		  			</div>
 		  			
@@ -185,9 +190,48 @@
 		          value: '5',
 		          label: '5'
 		        }],
-		        value: ''
+		        value: '',
+
+		        inputLocation : {
+		        	address: "",
+		        	city: "",
+		        	state: "",
+		        	zip: "",
+		        	name: "",
+		        }
+		    }
+		  },
+		  methods: {
+		    addLocation: function () {
+		   	  if (!this.inputLocation.name || !this.inputLocation.city) {
+		   	  	return;
+		   	  }
+		      var that = this;
+		      fetch('/locations', {
+				  method: 'POST',
+				  headers: {
+				    'Content-Type': 'application/json'
+				  },
+				  body: JSON.stringify(this.inputLocation)
+				})
+		      .then(function(response) {
+			    return response.json()
+			  }).then(function(json) {
+			    console.log('parsed json', json)
+			    that.inputLocation = {
+		        	address: "",
+		        	city: "",
+		        	state: "",
+		        	zip: "",
+		        	name: ""
+		        };
+			  }).catch(function(ex) {
+			    console.log('parsing failed', ex)
+			    alert(ex);
+			  })
 		    }
 		  }
+
 		})
 	</script>
 

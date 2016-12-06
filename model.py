@@ -8,9 +8,9 @@ from flask.ext.migrate import Migrate, MigrateCommand
 # Database Configurations
 app = Flask(__name__)
 DATABASE = 'newtest'
-PASSWORD = 'p@ssw0rd123'
+PASSWORD = ''
 USER = 'root'
-HOSTNAME = 'mysqlserver'
+HOSTNAME = 'localhost'
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://%s:%s@%s/%s'%(USER, PASSWORD, HOSTNAME, DATABASE)
