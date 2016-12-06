@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>CMPE273 - Project - Trip Planner using Uber vs Lyft's Price Estimation</title>
+	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+</head>
+
+
+<body>
+	<div id="app">
+		<el-row class="header">
+		  <el-col :span="24">
+		  	<div class="grid-content">
+		  		<h1 style="color: #fff; padding: 10px 0px 10px 40px;">Trip Planner using Uber vs Lyft's Price Estimation</h1>
+		  	</div>
+		  </el-col>
+		</el-row>
+
+		<el-row :gutter="20" style="margin-left: 30px; margin-right: 30px;">
+		  <el-col :span="8">
+		  	<div class="left-content content" style="position: relative;">
+		  		<div>
+		  			<div style="padding: 10px 10px 10px 10px; position: absolute; top: 0px; left: 0px">
+		  				<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="name" 
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						</el-input>
+						<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="zip"
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						</el-input>
+						<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="city"
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						</el-input>
+						<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="state"
+						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;">
+						</el-input>
+						<el-input
+						    class="inline-input"
+						    size="small"
+						    placeholder="address"
+						    style="width: 210px; margin: 0px 10px 10px 0px; float: left;">
+						    <el-button slot="append" icon="search"></el-button>	
+						</el-input>
+		  			</div>
+		  			
+					<div class="list-container" style="margin-top: 100px; max-height: 250px;">
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+						<div class="list">123</div>
+					</div>
+		  		</div>	
+		  	</div>
+		  </el-col>
+		  <el-col :span="16">
+		  	<div class="right-content content" style="position: relative;">
+
+		  		<div>
+		  			<el-select v-model="value" placeholder="Start Point" 
+		  				style="padding: 8px 10px 5px 10px; 
+		  				position: absolute; 
+		  				top: 0px; 
+		  				left: 0px;
+		  				width: 300px">
+					    <el-option
+					      v-for="item in options"
+					      :label="item.label"
+					      :value="item.value">
+					    </el-option>
+					</el-select>
+					<el-select v-model="value" placeholder="End Point" 
+		  				style="padding: 8px 10px 5px 340px; 
+		  				position: absolute; 
+		  				top: 0px; 
+		  				left: 0px;
+		  				width: 300px">
+					    <el-option
+					      v-for="item in options"
+					      :label="item.label"
+					      :value="item.value">
+					    </el-option>
+					</el-select>
+					<el-button style="
+		  				position: absolute; 
+		  				right: 30px; 
+		  				top: 8px">Compare</el-button>
+
+					<div class="list-container">
+						<div class="list">
+							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+						</div>
+						<div class="list">
+							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+						</div>
+						<div class="list">
+							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+						</div>
+						<div class="list">
+							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+						</div>
+						<div class="list">
+							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+						</div>
+						<div class="list">
+							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+						</div>
+						<div class="list">
+							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+						</div>
+						<div class="list">
+							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+						</div>
+						<div class="list">
+							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+						</div>
+					</div>
+
+		  		</div>
+		  		
+		  		
+		  	</div>
+		  </el-col>
+		</el-row>
+
+		<el-row :gutter="20" style="margin: 30px 30px 30px 30px;" v-loading="loading" element-loading-text="loading">
+		  <el-col :span="12"><div class="left-content content"></div></el-col>
+		  <el-col :span="12"><div class="right-content content"></div></el-col>
+		</el-row>
+	</div>
+</body>
+
+
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+
+	<script>
+		new Vue({
+		  el: '#app',
+		  data: function(){
+		    return { 
+
+		    	visible: false,
+		    	loading: true,
+		    	options: [{
+		          value: '1',
+		          label: '1'
+		        }, {
+		          value: '2',
+		          label: '2'
+		        }, {
+		          value: '3',
+		          label: '3'
+		        }, {
+		          value: '4',
+		          label: '4'
+		        }, {
+		          value: '5',
+		          label: '5'
+		        }],
+		        value: ''
+		    }
+		  }
+		})
+	</script>
+
+	<style>
+	  * {
+	  	padding: 0px;
+	  	margin: 0px;
+	  }
+	  .header {
+	  	height: 60px;
+	  	background: rgb(32, 160, 255);
+	  	margin: 0px;
+	  	margin-bottom: 15px;
+
+	  }
+	  .grid-content {
+	    border-radius: 4px;
+	    min-height: 36px;
+	  }
+	  .left-content {
+	  	min-height: 350px;
+	  	max-height: 350px;
+	  }
+	  .left-content:hover {
+	  	box-shadow: 0 0 8px 0 rgba(232, 237, 250, .6),
+	  				0 2px 4px 0 rgba(232, 237, 250, .5)
+	  }
+	  .right-content {
+	  	min-height: 350px;
+	  	max-height: 350px;
+	  	overflow: auto;
+	  }
+	  .right-content:hover {
+	  	box-shadow: 0 0 8px 0 rgba(232, 237, 250, .6),
+	  				0 2px 4px 0 rgba(232, 237, 250, .5)
+	  }
+
+	  .main-contain {
+	  	margin-left: 20px;
+	  	margin-right: 20px;
+	  }
+
+	  .content {
+		border: 1px solid #eaeefb;
+		border-radius: 4px;
+		transition: .2s;
+	  }
+
+	  .list {
+		padding: 10px 10px 10px 10px;
+		border: 1px solid #eaeefb;
+		font-size: 16px;
+		overflow: hidden;
+	  }
+
+	  .list:hover {
+		box-shadow: 0 0 2px 0 rgba(229, 233, 242, .2),
+	  				0 0 2px 0 rgba(229, 233, 242, .4);
+	  	transition: translateY(1px) translateX(2px);
+	  	-webkit-transform: translateY(1px) translateX(2px);
+	  	background-color: #F9FAFC;
+	  }
+
+	  .list-container {
+		margin-top: 50px; 
+		overflow: auto;
+		max-height: 300px;
+	  }
+
+	</style>
+
+</html>

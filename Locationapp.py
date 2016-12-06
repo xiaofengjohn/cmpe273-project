@@ -1,4 +1,5 @@
 from flask import Flask
+<<<<<<< HEAD
 from flask import request
 from model import db
 from model import Location_API
@@ -87,3 +88,14 @@ def app_status():
 if __name__ == "__main__":
 	app.run(host="0.0.0.0", port=5010, debug=True)
 
+=======
+from flask import render_template
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
+>>>>>>> 4d9b39a4f45e334e77eea1c2b223b796e3ea3af9
