@@ -2,6 +2,7 @@ from flask import Flask
 from flask import render_template
 from flask import request
 from flask import abort
+from sqlalchemy import desc
 from model import db
 from model import Location_API
 from model import CreateDB
@@ -40,6 +41,16 @@ def post():
 	except IntegrityError:
 		return json.dumps({'status':False})
 
+@app.route('/locations',methods =['GET'])
+def findAll():
+	try:
+		locations = Location_API.query.order_by(desc(Location_API.id)).all();
+		result = [];
+		for location in locations:
+			result.append({'id': location.id, 'name': location.name, 'address': location.address, 'city': location.city, 'state': location.state, 'zip': location.zip, 'coordinate': {'lat': location.lat, 'lng':location.lng}});
+		return json.dumps(result), 201;
+	except IntegrityError:
+		return json.dumps({'status':False})
 
 @app.route('/locations/<location_id>',methods =['GET'])
 def get_locationID(location_id):
@@ -87,4 +98,4 @@ def app_status():
 	return json.dumps({'server_info':application.config['SQLALCHEMY_DATABASE_URI']})
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0", port=5010, debug=True)
+	app.run(host="0.0.0.0", port=5010, threaded=True, debug=True)

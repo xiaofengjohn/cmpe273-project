@@ -61,26 +61,7 @@
 		  			</div>
 		  			
 					<div class="list-container" style="margin-top: 100px; max-height: 250px;">
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
-						<div class="list">123</div>
+						<div class="list" v-for="l in locationList"><%l.name + " ," + l.address + " ," + l.city + " ," + l.state + " ," + l.zip + " ," + l.coordinate.lng + " ," + l.coordinate.lat %></div>
 					</div>
 		  		</div>	
 		  	</div>
@@ -89,62 +70,32 @@
 		  	<div class="right-content content" style="position: relative;">
 
 		  		<div>
-		  			<el-select v-model="value" placeholder="Start Point" 
-		  				style="padding: 8px 10px 5px 10px; 
-		  				position: absolute; 
-		  				top: 0px; 
-		  				left: 0px;
+		  			<el-select v-model="startPoint" placeholder="Start Point" 
+		  				style="float: left;
+		  				margin: 8px 10px 10px 20px;
 		  				width: 300px">
 					    <el-option
-					      v-for="item in options"
-					      :label="item.label"
-					      :value="item.value">
+					      v-for="l in locationList"
+					      :label="l.name"
+					      :value="l.id">
 					    </el-option>
 					</el-select>
-					<el-select v-model="value" placeholder="End Point" 
-		  				style="padding: 8px 10px 5px 340px; 
-		  				position: absolute; 
-		  				top: 0px; 
-		  				left: 0px;
+					<el-select v-model="endPoint" placeholder="End Point" 
+		  				style="float: left; 
+		  				margin: 8px 10px 10px 0px;
 		  				width: 300px">
 					    <el-option
-					      v-for="item in options"
-					      :label="item.label"
-					      :value="item.value">
+					      v-for="l in locationList"
+					      :label="l.name"
+					      :value="l.id">
 					    </el-option>
 					</el-select>
-					<el-button style="
-		  				position: absolute; 
-		  				right: 30px; 
-		  				top: 8px">Compare</el-button>
+					<el-button style="float: left;
+		  				margin: 8px 10px 10px 0px;">Compare</el-button>
 
-					<div class="list-container">
-						<div class="list">
-							<el-checkbox v-model="checked" checked>abc</el-checkbox>
-						</div>
-						<div class="list">
-							<el-checkbox v-model="checked" checked>abc</el-checkbox>
-						</div>
-						<div class="list">
-							<el-checkbox v-model="checked" checked>abc</el-checkbox>
-						</div>
-						<div class="list">
-							<el-checkbox v-model="checked" checked>abc</el-checkbox>
-						</div>
-						<div class="list">
-							<el-checkbox v-model="checked" checked>abc</el-checkbox>
-						</div>
-						<div class="list">
-							<el-checkbox v-model="checked" checked>abc</el-checkbox>
-						</div>
-						<div class="list">
-							<el-checkbox v-model="checked" checked>abc</el-checkbox>
-						</div>
-						<div class="list">
-							<el-checkbox v-model="checked" checked>abc</el-checkbox>
-						</div>
-						<div class="list">
-							<el-checkbox v-model="checked" checked>abc</el-checkbox>
+					<div class="list-container" style="clear: both;">
+						<div class="list" v-for="l in locationList">
+							<el-checkbox v-model="l.checked"><%l.name + " ," + l.address + " ," + l.city + " ," + l.state + " ," + l.zip + " ," + l.coordinate.lng + " ," + l.coordinate.lat + " ," + l.checked %></el-checkbox>
 						</div>
 					</div>
 
@@ -167,12 +118,23 @@
 	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 
 	<script>
+		
 		new Vue({
+		  watch: {
+		    locationList: {
+		      handler: function (val, oldVal) {
+		        console.log('a thing changed')
+		      },
+		      deep: true
+		    }
+		  },
+		  delimiters: ['<%', '%>'],
 		  el: '#app',
-		  data: function(){
-		    return { 
 
-		    	visible: false,
+		  data: function(){
+
+		    return { 
+		    	locationList: [],
 		    	loading: true,
 		    	options: [{
 		          value: '1',
@@ -190,7 +152,10 @@
 		          value: '5',
 		          label: '5'
 		        }],
-		        value: '',
+
+		        startPoint: '',
+
+		        endPoint: '',
 
 		        inputLocation : {
 		        	address: "",
@@ -201,6 +166,7 @@
 		        }
 		    }
 		  },
+
 		  methods: {
 		    addLocation: function () {
 		   	  if (!this.inputLocation.name || !this.inputLocation.city) {
@@ -218,6 +184,8 @@
 			    return response.json()
 			  }).then(function(json) {
 			    console.log('parsed json', json)
+			    json.checked = false;
+			    that.locationList.unshift(json);
 			    that.inputLocation = {
 		        	address: "",
 		        	city: "",
@@ -226,10 +194,36 @@
 		        	name: ""
 		        };
 			  }).catch(function(ex) {
-			    console.log('parsing failed', ex)
-			    alert(ex);
+			    alert("connection error");
 			  })
 		    }
+		  },
+
+		  created: function () {
+		    
+		  	var self = this;
+
+		  	console.log("ok");
+
+		  	fetch('/locations', {
+				  method: 'GET',
+				  headers: {
+				    'Content-Type': 'application/json'
+				  }
+				})
+		      .then(function(response) {
+			    return response.json()
+			  }).then(function(json) {
+			    if (json) {
+			  		for (var i in json) {
+			  			json[i].checked = false;
+			  		}
+			  	}
+			    self.locationList = json;
+			    console.log('parsed json', JSON.stringify(self.locationList));
+			  }).catch(function(ex) {
+			    alert("connection error1");
+			  })
 		  }
 
 		})
