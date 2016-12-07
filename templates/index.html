@@ -1,300 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-	<meta charset="UTF-8">
-	<title>CMPE273 - Project - Trip Planner using Uber vs Lyft's Price Estimation</title>
-	<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
+    <meta charset="UTF-8">
+    <title>CMPE273 - Project - Trip Planner using Uber vs Lyft's Price Estimation</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-default/index.css">
 </head>
 
-
 <body>
-	<div id="app">
-		<el-row class="header">
-		  <el-col :span="24">
-		  	<div class="grid-content">
-		  		<h1 style="color: #fff; padding: 10px 0px 10px 40px;">Trip Planner using Uber vs Lyft's Price Estimation</h1>
-		  	</div>
-		  </el-col>
-		</el-row>
-
-		<el-row :gutter="20" style="margin-left: 30px; margin-right: 30px;">
-		  <el-col :span="8">
-		  	<div class="left-content content" style="position: relative;">
-		  		<div>
-		  			<div style="padding: 10px 10px 10px 10px; position: absolute; top: 0px; left: 0px">
-		  				<el-input
-						    class="inline-input"
-						    size="small"
-						    placeholder="name" 
-						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;"
-						    v-model="inputLocation.name">
-						</el-input>
-						<el-input
-						    class="inline-input"
-						    size="small"
-						    placeholder="zip"
-						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;"
-						    v-model="inputLocation.zip">
-						</el-input>
-						<el-input
-						    class="inline-input"
-						    size="small"
-						    placeholder="city"
-						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;"
-						    v-model="inputLocation.city">
-						</el-input>
-						<el-input
-						    class="inline-input"
-						    size="small"
-						    placeholder="state"
-						    style="width: 100px; float: left; margin: 0px 10px 10px 0px;"
-						    v-model="inputLocation.state">
-						</el-input>
-						<el-input
-						    class="inline-input"
-						    size="small"
-						    placeholder="address"
-						    style="width: 210px; margin: 0px 10px 10px 0px; float: left;"
-						    v-model="inputLocation.address">
-						    <el-button slot="append" icon="search" @click="addLocation"></el-button>	
-						</el-input>
-		  			</div>
-		  			
-					<div class="list-container" style="margin-top: 100px; max-height: 250px;">
-						<div class="list" v-for="l in locationList"><%l.name + " ," + l.address + " ," + l.city + " ," + l.state + " ," + l.zip + " ," + l.coordinate.lng + " ," + l.coordinate.lat %></div>
-					</div>
-		  		</div>	
-		  	</div>
-		  </el-col>
-		  <el-col :span="16">
-		  	<div class="right-content content" style="position: relative;">
-
-		  		<div>
-		  			<el-select v-model="startPoint" placeholder="Start Point" 
-		  				style="float: left;
+    <div id="app">
+        <el-row class="header">
+            <el-col :span="24">
+                <div class="grid-content">
+                    <h1 style="color: #000; padding: 10px 0px 10px 40px; font-family: ff-clan-web-pro,'Helvetica Neue',Helvetica,sans-serif!important; font-weight: 200;">Trip Planner using Uber vs Lyft's Price Estimation</h1>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" style="margin-left: 30px; margin-right: 30px;">
+            <el-col :span="8">
+                <div class="left-content content" style="position: relative;">
+                    <div>
+                        <div style="padding: 10px 10px 10px 10px; position: absolute; top: 0px; left: 0px">
+                            <el-input class="inline-input" size="small" placeholder="name" style="width: 100px; float: left; margin: 0px 10px 10px 0px;" v-model="inputLocation.name">
+                            </el-input>
+                            <el-input class="inline-input" size="small" placeholder="zip" style="width: 100px; float: left; margin: 0px 10px 10px 0px;" v-model="inputLocation.zip">
+                            </el-input>
+                            <el-input class="inline-input" size="small" placeholder="city" style="width: 100px; float: left; margin: 0px 10px 10px 0px;" v-model="inputLocation.city">
+                            </el-input>
+                            <el-input class="inline-input" size="small" placeholder="state" style="width: 100px; float: left; margin: 0px 10px 10px 0px;" v-model="inputLocation.state">
+                            </el-input>
+                            <el-input class="inline-input" size="small" placeholder="address" style="width: 210px; margin: 0px 10px 10px 0px; float: left;" v-model="inputLocation.address">
+                                <el-button slot="append" icon="search" @click="addLocation"></el-button>
+                            </el-input>
+                        </div>
+                        <div class="list-container" style="margin-top: 100px; max-height: 250px;" v-loading="listLoading" element-loading-text="loading">
+                            <div class="list" v-for="l in locationList">
+                            	<div style="float: left; overflow: hidden;">
+                            		<%l.name + " ," + l.address + " ," + l.city + " ," + l.state + " ," + l.zip + " ," + l.coordinate.lng + " ," + l.coordinate.lat %>
+                            	</div>
+                                <div class="el-icon-delete" style="float: right;" @click="deleteLocation(l)"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </el-col>
+            <el-col :span="16">
+                <div class="right-content content" style="position: relative;">
+                    <div>
+                        <el-select v-model="startPoint" placeholder="Start Point" style="float: left;
 		  				margin: 8px 10px 10px 20px;
 		  				width: 300px">
-					    <el-option
-					      v-for="l in locationList"
-					      :label="l.name"
-					      :value="l.id">
-					    </el-option>
-					</el-select>
-					<el-select v-model="endPoint" placeholder="End Point" 
-		  				style="float: left; 
+                            <el-option v-for="l in locationList" :label="l.name" :value="l.id">
+                            </el-option>
+                        </el-select>
+                        <el-select v-model="endPoint" placeholder="End Point" style="float: left; 
 		  				margin: 8px 10px 10px 0px;
 		  				width: 300px">
-					    <el-option
-					      v-for="l in locationList"
-					      :label="l.name"
-					      :value="l.id">
-					    </el-option>
-					</el-select>
-					<el-button style="float: left;
+                            <el-option v-for="l in locationList" :label="l.name" :value="l.id">
+                            </el-option>
+                        </el-select>
+                        <el-button style="float: left;
 		  				margin: 8px 10px 10px 0px;">Compare</el-button>
-
-					<div class="list-container" style="clear: both;">
-						<div class="list" v-for="l in locationList">
-							<el-checkbox v-model="l.checked"><%l.name + " ," + l.address + " ," + l.city + " ," + l.state + " ," + l.zip + " ," + l.coordinate.lng + " ," + l.coordinate.lat + " ," + l.checked %></el-checkbox>
-						</div>
-					</div>
-
-		  		</div>
-		  		
-		  		
-		  	</div>
-		  </el-col>
-		</el-row>
-
-		<el-row :gutter="20" style="margin: 30px 30px 30px 30px;" v-loading="loading" element-loading-text="loading">
-		  <el-col :span="12"><div class="left-content content"></div></el-col>
-		  <el-col :span="12"><div class="right-content content"></div></el-col>
-		</el-row>
-	</div>
+                        <div class="list-container" style="clear: both;" v-loading="listLoading" element-loading-text="loading">
+                            <div class="list" v-for="l in computedLocationList">
+                                <el-checkbox v-model="l.checked">
+                                    <%l.name + " ," + l.address + " ," + l.city + " ," + l.state + " ," + l.zip + " ," + l.coordinate.lng + " ," + l.coordinate.lat + " ," + l.checked %>
+                                </el-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" style="margin: 30px 30px 30px 30px;" v-loading="loading" element-loading-text="loading">
+            <el-col :span="12">
+                <div class="left-content content"></div>
+            </el-col>
+            <el-col :span="12">
+                <div class="right-content content"></div>
+            </el-col>
+        </el-row>
+    </div>
 </body>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+new Vue({
+    watch: {
+        locationList: {
+            handler: function(val, oldVal) {
+                
+            },
+            deep: true
+        }
+    },
+    delimiters: ['<%', '%>'],
+    el: '#app',
 
+    data: function() {
 
-	<script src="https://unpkg.com/vue/dist/vue.js"></script>
-	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+        return {
+            locationList: [],
+            loading: true,
+            listLoading: false,
+            options: [{
+                value: '1',
+                label: '1'
+            }, {
+                value: '2',
+                label: '2'
+            }, {
+                value: '3',
+                label: '3'
+            }, {
+                value: '4',
+                label: '4'
+            }, {
+                value: '5',
+                label: '5'
+            }],
 
-	<script>
-		
-		new Vue({
-		  watch: {
-		    locationList: {
-		      handler: function (val, oldVal) {
-		        console.log('a thing changed')
-		      },
-		      deep: true
-		    }
-		  },
-		  delimiters: ['<%', '%>'],
-		  el: '#app',
+            startPoint: '',
 
-		  data: function(){
+            endPoint: '',
 
-		    return { 
-		    	locationList: [],
-		    	loading: true,
-		    	options: [{
-		          value: '1',
-		          label: '1'
-		        }, {
-		          value: '2',
-		          label: '2'
-		        }, {
-		          value: '3',
-		          label: '3'
-		        }, {
-		          value: '4',
-		          label: '4'
-		        }, {
-		          value: '5',
-		          label: '5'
-		        }],
+            inputLocation: {
+                address: "",
+                city: "",
+                state: "",
+                zip: "",
+                name: "",
+            }
+        }
+    },
 
-		        startPoint: '',
-
-		        endPoint: '',
-
-		        inputLocation : {
-		        	address: "",
-		        	city: "",
-		        	state: "",
-		        	zip: "",
-		        	name: "",
-		        }
-		    }
-		  },
-
-		  methods: {
-		    addLocation: function () {
-		   	  if (!this.inputLocation.name || !this.inputLocation.city) {
-		   	  	return;
-		   	  }
-		      var that = this;
-		      fetch('/locations', {
-				  method: 'POST',
-				  headers: {
-				    'Content-Type': 'application/json'
-				  },
-				  body: JSON.stringify(this.inputLocation)
-				})
-		      .then(function(response) {
-			    return response.json()
-			  }).then(function(json) {
-			    console.log('parsed json', json)
-			    json.checked = false;
-			    that.locationList.unshift(json);
-			    that.inputLocation = {
-		        	address: "",
-		        	city: "",
-		        	state: "",
-		        	zip: "",
-		        	name: ""
-		        };
-			  }).catch(function(ex) {
-			    alert("connection error");
-			  })
-		    }
-		  },
-
-		  created: function () {
-		    
-		  	var self = this;
-
-		  	console.log("ok");
-
-		  	fetch('/locations', {
-				  method: 'GET',
-				  headers: {
-				    'Content-Type': 'application/json'
-				  }
-				})
-		      .then(function(response) {
-			    return response.json()
-			  }).then(function(json) {
-			    if (json) {
-			  		for (var i in json) {
-			  			json[i].checked = false;
-			  		}
-			  	}
-			    self.locationList = json;
-			    console.log('parsed json', JSON.stringify(self.locationList));
-			  }).catch(function(ex) {
-			    alert("connection error1");
-			  })
-		  }
-
-		})
-	</script>
-
-	<style>
-	  * {
-	  	padding: 0px;
-	  	margin: 0px;
+    computed: {
+	  computedLocationList: function () {
+	  	console.log("ok");
+	  	var self = this
+	    return this.locationList.filter(function (element) {
+	      return self.startPoint != element.id;
+	    })
 	  }
-	  .header {
-	  	height: 60px;
-	  	background: rgb(32, 160, 255);
-	  	margin: 0px;
-	  	margin-bottom: 15px;
+	},
 
-	  }
-	  .grid-content {
-	    border-radius: 4px;
-	    min-height: 36px;
-	  }
-	  .left-content {
-	  	min-height: 350px;
-	  	max-height: 350px;
-	  }
-	  .left-content:hover {
-	  	box-shadow: 0 0 8px 0 rgba(232, 237, 250, .6),
-	  				0 2px 4px 0 rgba(232, 237, 250, .5)
-	  }
-	  .right-content {
-	  	min-height: 350px;
-	  	max-height: 350px;
-	  	overflow: auto;
-	  }
-	  .right-content:hover {
-	  	box-shadow: 0 0 8px 0 rgba(232, 237, 250, .6),
-	  				0 2px 4px 0 rgba(232, 237, 250, .5)
-	  }
+    methods: {
+        addLocation: function() {
+            if (!this.inputLocation.name || !this.inputLocation.city) {
+                return;
+            }
+            var that = this;
+            that.listLoading = true;
+            fetch('/locations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.inputLocation)
+                })
+                .then(function(response) {
+                    return response.json()
+                }).then(function(json) {
+                    console.log('parsed json', json)
+                    json.checked = false;
+                    that.locationList.unshift(json);
+                    that.inputLocation = {
+                        address: "",
+                        city: "",
+                        state: "",
+                        zip: "",
+                        name: ""
+                    };
+                    that.listLoading = false;
+                    that.$message({
+                        message: 'Add a location success.',
+                        type: 'success'
+                    });
+                }).catch(function(ex) {
+                    that.$message({
+                        message: 'connection error',
+                        type: 'warning'
+                    });
+                    that.listLoading = false;
+                })
+        },
 
-	  .main-contain {
-	  	margin-left: 20px;
-	  	margin-right: 20px;
-	  }
+        deleteLocation: function(l) {
+            var index = this.locationList.indexOf(l)
+            var that = this;
+            if (index !== -1) {
 
-	  .content {
-		border: 1px solid #eaeefb;
-		border-radius: 4px;
-		transition: .2s;
-	  }
 
-	  .list {
-		padding: 10px 10px 10px 10px;
-		border: 1px solid #eaeefb;
-		font-size: 16px;
-		overflow: hidden;
-	  }
+            } else {
+                that.$message({
+                    message: 'No element exist, element = ' + l.name,
+                    type: 'warning'
+                });
+            }
 
-	  .list:hover {
-		box-shadow: 0 0 2px 0 rgba(229, 233, 242, .2),
-	  				0 0 2px 0 rgba(229, 233, 242, .4);
-	  	transition: translateY(1px) translateX(2px);
-	  	-webkit-transform: translateY(1px) translateX(2px);
-	  	background-color: #F9FAFC;
-	  }
+            var cf = confirm("Do you want to delete the location");
+            if (cf) {
+                fetch('/locations/' + l.id, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(function(response) {
+                    	console.log(JSON.stringify(response));
+                        return response.json()
+                    }).then(function(json) {
+                        if (index !== -1) {
+                            that.locationList.splice(index, 1)
+                        }
+                        that.$message({
+                            message: 'Delete a location success.',
+                            type: 'success'
+                        });
+                    }).catch(function(ex) {
+                        if (index !== -1) {
+                            that.locationList.splice(index, 1)
+                        }
+                        that.$message({
+                            message: 'Delete a location success.',
+                            type: 'success'
+                        });
+                    })
+            }
 
-	  .list-container {
-		margin-top: 50px; 
-		overflow: auto;
-		max-height: 300px;
-	  }
 
-	</style>
+        }
+    },
+
+    created: function() {
+
+        var self = this;
+
+        this.listLoading = true;
+
+        fetch('/locations', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response) {
+                return response.json()
+            }).then(function(json) {
+                if (json) {
+                    for (var i in json) {
+                        json[i].checked = false;
+                    }
+                }
+                self.locationList = json;
+                console.log('parsed json', JSON.stringify(self.locationList));
+                self.listLoading = false;
+                self.$message({
+                    message: 'init data success.',
+                    type: 'success'
+                });
+            }).catch(function(ex) {
+                self.$message({
+                    message: 'connection error1',
+                    type: 'warning'
+                });
+                self.listLoading = false;
+            })
+    }
+
+})
+</script>
+<style>
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+.header {
+    height: 60px;
+    background: #fff;
+    margin: 0px;
+    margin-bottom: 15px;
+}
+
+.grid-content {
+    border-radius: 4px;
+    min-height: 36px;
+}
+
+.left-content {
+    min-height: 350px;
+    max-height: 350px;
+}
+
+.left-content:hover {
+    box-shadow: 0 0 8px 0 rgba(232, 237, 250, .6), 0 2px 4px 0 rgba(232, 237, 250, .5)
+}
+
+.right-content {
+    min-height: 350px;
+    max-height: 350px;
+    overflow: auto;
+}
+
+.right-content:hover {
+    box-shadow: 0 0 8px 0 rgba(232, 237, 250, .6), 0 2px 4px 0 rgba(232, 237, 250, .5)
+}
+
+.main-contain {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.content {
+    border: 1px solid #eaeefb;
+    border-radius: 4px;
+    transition: .2s;
+}
+
+.list {
+    padding: 10px 10px 10px 10px;
+    border: 1px solid #eaeefb;
+    font-size: 16px;
+    overflow: hidden;
+}
+
+.list:hover {
+    box-shadow: 0 0 2px 0 rgba(229, 233, 242, .2), 0 0 2px 0 rgba(229, 233, 242, .4);
+    transition: translateY(1px) translateX(2px);
+    -webkit-transform: translateY(1px) translateX(2px);
+    background-color: #F9FAFC;
+}
+
+.list-container {
+    margin-top: 50px;
+    overflow: auto;
+    max-height: 300px;
+}
+
+::selection {
+    background: #57AD57;
+    color: #FFF;
+}
+</style>
 
 </html>
