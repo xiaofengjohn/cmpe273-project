@@ -79,10 +79,51 @@
         </el-row>
         <el-row :gutter="20" style="margin: 30px 30px 30px 30px;" v-loading="loading" element-loading-text="loading">
             <el-col :span="12">
-                <div class="left-content content"></div>
+                <div class="left-content content" style="position: relative;"
+                :style="{backgroundColor: lyftTripQuery.total_costs_by_cheapest_car_type > uberTripQuery.total_costs_by_cheapest_car_type ? '#F9FAFC' : '#FFF'}">
+                	<div style="position: absolute; left: 20px; top: 10px;">
+                		<img src="https://www.seeklogo.net/wp-content/uploads/2015/08/uber-logo-vector-download.jpg" style="width: 100px;">
+                	</div>
+                	<div style="position: absolute; right: 20px; top: 10px;" v-if="lyftTripQuery.total_costs_by_cheapest_car_type > uberTripQuery.total_costs_by_cheapest_car_type">
+                		<%getRouter%>
+                	</div>
+             		<div style="margin: 150px" v-if="uberTripQuery">
+             			
+             			<ul>
+             				<li>name: <%uberTripQuery.name%></li>
+             				<li>total_duration: <%uberTripQuery.total_duration%></li>
+             				<li>duration_unit: <%uberTripQuery.duration_unit%></li>
+             				<li>distance_unit: <%uberTripQuery.distance_unit%></li>
+             				<li>total_costs_by_cheapest_car_type: <%uberTripQuery.total_costs_by_cheapest_car_type%></li>
+             				<li>total_distance: <%uberTripQuery.total_distance%></li>
+             				<li>currency_code: <%uberTripQuery.currency_code%></li>
+             			</ul>
+             		</div>
+                </div>
             </el-col>
             <el-col :span="12">
-                <div class="right-content content"></div>
+                <div class="right-content content" style="position: relative;" 
+                :style="{backgroundColor: lyftTripQuery.total_costs_by_cheapest_car_type < uberTripQuery.total_costs_by_cheapest_car_type ? '#F9FAFC' : '#FFF'}">
+                	<div style="position: absolute; left: 50px; top: 30px;">
+                		<img src="http://thepowershot.com/wp-content/uploads/2015/10/lyft-logo-facebook.jpg" style="width: 60px;">
+                	</div>
+                	<div style="position: absolute; right: 20px; top: 10px;" v-if="lyftTripQuery.total_costs_by_cheapest_car_type < uberTripQuery.total_costs_by_cheapest_car_type">
+                		<%getRouter%>
+                	</div>
+                	<div style="margin: 150px;" v-if="lyftTripQuery">
+             			
+             			<ul>
+             				<li>name: <%lyftTripQuery.name%></li>
+             				<li>total_duration: <%lyftTripQuery.total_duration%></li>
+             				<li>duration_unit: <%lyftTripQuery.duration_unit%></li>
+             				<li>distance_unit: <%lyftTripQuery.distance_unit%></li>
+             				<li>total_costs_by_cheapest_car_type: <%lyftTripQuery.total_costs_by_cheapest_car_type%></li>
+             				<li>total_distance: <%lyftTripQuery.total_distance%></li>
+             				<li>currency_code: <%lyftTripQuery.currency_code%></li>
+             			</ul>
+             			
+             		</div>
+                </div>
             </el-col>
         </el-row>
     </div>
@@ -106,7 +147,7 @@ new Vue({
 
         return {
             locationList: [],
-            loading: true,
+            loading: false,
             listLoading: false,
             options: [{
                 value: '1',
@@ -138,10 +179,12 @@ new Vue({
             },
 
             tripQuery: {
-			    "start": "",
-			    "others" : [],
-			    "end": ""
-			}
+			    
+			},
+
+			lyftTripQuery: {},
+
+			uberTripQuery: {}
 
         }
     },
@@ -158,7 +201,20 @@ new Vue({
 	  selectedLocationStyle: function(l) {
 	  	var color = this.inputLocation.id === l.id ? '#F9FAFC' : '#FFF';
 	  	return {backgroundColor : color};
+	  },
+
+	  getRouter: function() {
+	  	var res = "";
+	  	res += this.tripQuery.start + " --> ";
+	  	if (this.tripQuery && this.tripQuery.best_route_by_costs) {
+	  		for (var i of this.tripQuery.best_route_by_costs) {
+	  			res += i  + " --> ";
+	  		}
+	  	}
+	  	res += this.tripQuery.start;
+	  	return res;
 	  }
+
 	},
 
     methods: {
@@ -264,6 +320,7 @@ new Vue({
         	var others = this.locationList.filter((e)=>{
         		return e.id !== this.startPoint && e.checked;
         	});
+        	that = this;
         	var tripRequest = {};
         	tripRequest.start = this.startPoint + "";
         	tripRequest.others = others;
@@ -274,6 +331,9 @@ new Vue({
         	tripRequest.others = temp;
         	tripRequest.end = this.startPoint + "";
         	console.log(tripRequest);
+        	that.loading = true;
+
+        	that.startPoint = "";
         	fetch('/trips', {
                     method: 'POST',
                     headers: {
@@ -285,14 +345,27 @@ new Vue({
 			        if (!response.ok) {
 			            throw Error(response.statusText);
 			        }
+			        that.loading = false;
 			        return response.json();
 			    }).then(function(response) {
 			        console.log(response);
+			        that.tripQuery = response;
+			        if (that.tripQuery.providers[0].name == 'Uber') {
+			        	that.uberTripQuery = that.tripQuery.providers[0];
+			        	that.lyftTripQuery = that.tripQuery.providers[1];
+			        } else {
+			        	that.uberTripQuery = that.tripQuery.providers[1];
+			        	that.lyftTripQuery = that.tripQuery.providers[0];
+			        }
+			        console.log(that.lyftTripQuery);
+			        console.log(that.uberTripQuery);
+			        that.loading = false;
 			    }).catch(function(error) {
 			        that.$message({
                         message: 'update error',
                         type: 'warning'
                     });
+                    that.loading = false;
 			    });
 
         },

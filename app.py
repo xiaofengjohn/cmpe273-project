@@ -235,5 +235,5 @@ def app_status():
 	return json.dumps({'server_info':application.config['SQLALCHEMY_DATABASE_URI']})
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0", port=5015, debug=False)
+	app.run(host="0.0.0.0", port=5015, debug=True)
 
