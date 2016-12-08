@@ -1,5 +1,8 @@
 from flask import Flask
+from flask import render_template
 from flask import request
+from flask import abort
+from sqlalchemy import desc
 from model import db
 from model import Location_API
 from model import CreateDB
@@ -14,13 +17,26 @@ import uber
 from lyft import lyft
 from tsp import TSP
 #import Trips
-
+lyft = lyft()
 
 app = Flask(__name__)
 
 @app.route('/')
 def homepage():
-	return "Welcome to the Location api application, feel free to add your trip locations"
+	return render_template('index.html')
+
+#find all locations
+@app.route('/locations',methods =['GET'])
+def findAll():
+	try:
+		locations = Location_API.query.order_by(desc(Location_API.id)).all();
+		result = [];
+		for location in locations:
+			result.append({'id': location.id, 'name': location.name, 'address': location.address, 'city': location.city, 'state': location.state, 'zip': location.zip, 'coordinate': {'lat': location.lat, 'lng':location.lng}});
+		return json.dumps(result), 201;
+	except IntegrityError:
+		return json.dumps({'status':False})
+
 
 #adding a new location
 @app.route('/locations', methods=['POST'])
@@ -76,6 +92,8 @@ def delete_location(location_id):
 
 @app.route('/trips', methods=['POST'])
 def trip_estimator():
+	#lyft = lyft()
+	global lyft
 	data1 = json.loads(request.data)
 	startID = data1['start']
 	locationsID = data1['others']
@@ -111,7 +129,7 @@ def trip_estimator():
 
 	#x = uber.uber_price(location[0].lat, location[0].lng, location[0].lat, location[0].lng)
 	#print x
-	lyft = lyft()
+	#lyft = lyft()
 	lyftmatrix=[[0 for row in range(0,matrixlength)] for col in range(0,matrixlength)]
 	for i in range(matrixlength):
 		for j in range(matrixlength):

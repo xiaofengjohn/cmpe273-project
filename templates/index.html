@@ -17,7 +17,7 @@
             </el-col>
         </el-row>
         <el-row :gutter="20" style="margin-left: 30px; margin-right: 30px;">
-            <el-col :span="8">
+            <el-col :span="10">
                 <div class="left-content content" style="position: relative;">
                     <div>
                         <div style="padding: 10px 10px 10px 10px; position: absolute; top: 0px; left: 0px">
@@ -30,13 +30,17 @@
                             <el-input class="inline-input" size="small" placeholder="state" style="width: 100px; float: left; margin: 0px 10px 10px 0px;" v-model="inputLocation.state">
                             </el-input>
                             <el-input class="inline-input" size="small" placeholder="address" style="width: 210px; margin: 0px 10px 10px 0px; float: left;" v-model="inputLocation.address">
-                                <el-button slot="append" icon="search" @click="addLocation"></el-button>
+                                <el-button slot="append" icon="search" @click="addLocation" v-if="inputLocation.id == null"></el-button>
+                                <el-button slot="append" icon="upload2" @click="updateLocation" v-if="inputLocation.id != null"></el-button>
                             </el-input>
                         </div>
                         <div class="list-container" style="margin-top: 100px; max-height: 250px;" v-loading="listLoading" element-loading-text="loading">
-                            <div class="list" v-for="l in locationList">
-                            	<div style="float: left; overflow: hidden;">
-                            		<%l.name + " ," + l.address + " ," + l.city + " ," + l.state + " ," + l.zip + " ," + l.coordinate.lng + " ," + l.coordinate.lat %>
+                            <div class="list" v-for="l in locationList" :style="{backgroundColor: inputLocation.id == l.id ? '#F9FAFC' : '#FFF'}">
+                            	<div style="float: left;" @click="clickLocation(l)">
+                            		<div style="overflow: hidden;">
+                            			<%l.name + " ," + l.address + " ," + l.city + " ," + l.state + " ," + l.zip + " ," + l.coordinate.lng + " ," + l.coordinate.lat %>
+                            		</div>
+                            		
                             	</div>
                                 <div class="el-icon-delete" style="float: right;" @click="deleteLocation(l)"></div>
                             </div>
@@ -44,7 +48,7 @@
                     </div>
                 </div>
             </el-col>
-            <el-col :span="16">
+            <el-col :span="14">
                 <div class="right-content content" style="position: relative;">
                     <div>
                         <el-select v-model="startPoint" placeholder="Start Point" style="float: left;
@@ -55,12 +59,13 @@
                         </el-select>
                         <el-select v-model="endPoint" placeholder="End Point" style="float: left; 
 		  				margin: 8px 10px 10px 0px;
-		  				width: 300px">
+		  				width: 300px; display: none;">
                             <el-option v-for="l in locationList" :label="l.name" :value="l.id">
                             </el-option>
                         </el-select>
                         <el-button style="float: left;
-		  				margin: 8px 10px 10px 0px;">Compare</el-button>
+		  				margin: 8px 10px 10px 0px;"
+		  				@click="query">Compare</el-button>
                         <div class="list-container" style="clear: both;" v-loading="listLoading" element-loading-text="loading">
                             <div class="list" v-for="l in computedLocationList">
                                 <el-checkbox v-model="l.checked">
@@ -130,7 +135,14 @@ new Vue({
                 state: "",
                 zip: "",
                 name: "",
-            }
+            },
+
+            tripQuery: {
+			    "start": "",
+			    "others" : [],
+			    "end": ""
+			}
+
         }
     },
 
@@ -141,6 +153,11 @@ new Vue({
 	    return this.locationList.filter(function (element) {
 	      return self.startPoint != element.id;
 	    })
+	  },
+
+	  selectedLocationStyle: function(l) {
+	  	var color = this.inputLocation.id === l.id ? '#F9FAFC' : '#FFF';
+	  	return {backgroundColor : color};
 	  }
 	},
 
@@ -196,6 +213,7 @@ new Vue({
                     message: 'No element exist, element = ' + l.name,
                     type: 'warning'
                 });
+                return ;
             }
 
             var cf = confirm("Do you want to delete the location");
@@ -229,6 +247,91 @@ new Vue({
             }
 
 
+        },
+
+        clickLocation: function(l) {
+        	var index = this.locationList.indexOf(l)
+        	if (index == -1) {
+        		return;
+        	}
+        	this.inputLocation = l;
+        },
+
+        query: function() {
+        	if (!this.startPoint) {
+        		return;
+        	}
+        	var others = this.locationList.filter((e)=>{
+        		return e.id !== this.startPoint && e.checked;
+        	});
+        	var tripRequest = {};
+        	tripRequest.start = this.startPoint + "";
+        	tripRequest.others = others;
+        	var temp = [];
+        	for (var i of others) {
+        		temp.push(i.id + "");
+        	}
+        	tripRequest.others = temp;
+        	tripRequest.end = this.startPoint + "";
+        	console.log(tripRequest);
+        	fetch('/trips', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(tripRequest)
+                })
+			    .then(function(response) {
+			        if (!response.ok) {
+			            throw Error(response.statusText);
+			        }
+			        return response.json();
+			    }).then(function(response) {
+			        console.log(response);
+			    }).catch(function(error) {
+			        that.$message({
+                        message: 'update error',
+                        type: 'warning'
+                    });
+			    });
+
+        },
+
+        updateLocation: function() {
+        	if (!this.inputLocation.name || !this.inputLocation.city || !this.inputLocation.id) {
+                return;
+            }
+            var that = this;
+            fetch('/locations/' + that.inputLocation.id, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.inputLocation)
+                })
+			    .then(function(response) {
+			        if (!response.ok) {
+			            throw Error(response.statusText);
+			        }
+			        return response;
+			    }).then(function(response) {
+			        that.inputLocation = {
+		                address: "",
+		                city: "",
+		                state: "",
+		                zip: "",
+		                name: "",
+		            };
+		            that.$message({
+                        message: 'update success',
+                        type: 'success'
+                    });
+			    }).catch(function(error) {
+			        that.$message({
+                        message: 'update error',
+                        type: 'warning'
+                    });
+			    });
         }
     },
 
