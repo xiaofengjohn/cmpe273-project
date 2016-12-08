@@ -1,10 +1,6 @@
-#from geopy.geocoders import Nominatim
 import requests, json
 from requests.auth import HTTPBasicAuth
-#start_lat = 21.3088619
-#start_lng = -157.8086674
-#end_lat = 21.2965912
-#end_lng =  -157.8564657
+
 class lyft:
     """
     For Lyft object generation
@@ -35,14 +31,12 @@ class lyft:
         auth_header = HTTPBasicAuth(self.client_id, self.client_secret)
 
         # request data
-        res = requests.post(url=url,
-        data = payload,
-        auth = auth_header)
+        res = requests.post(url=url, data = payload,auth = auth_header)
 
-        # extract the token from the response
+        # extracting the token from the response
         token = res.json()['access_token']
         return token
-
+    #For getting ride costs
     def lyft_price(self,start_lat,start_lng,end_lat,end_lng):
         """
          using the lyft cost api to get the prices for a route
@@ -55,7 +49,8 @@ class lyft:
                 price = float(data["estimated_cost_cents_min"]/100)
 
         return price
-
+    
+    #For getting distance travelled
     def lyft_distance(self,start_lat,start_lng,end_lat,end_lng):
         """
          using the lyft cost api to get the prices for a route
@@ -68,7 +63,8 @@ class lyft:
                 price = float(data["estimated_distance_miles"])
 
         return price
-
+    
+    #For getting ride duration
     def lyft_duration(self,start_lat,start_lng,end_lat,end_lng):
         """
          using the lyft cost api to get the prices for a route
@@ -82,10 +78,3 @@ class lyft:
                 duration = float(data["estimated_duration_seconds"]/60)
 
         return duration
-
-#a = lyft()
-#x = a.lyft_price(start_lat,start_lng,end_lat,end_lng)
-#y = a.lyft_distance(start_lat,start_lng,end_lat,end_lng)
-#z = a.lyft_duration(start_lat,start_lng,end_lat,end_lng)
-#print x, y , z
-
