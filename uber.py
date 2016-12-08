@@ -1,15 +1,8 @@
 import requests
 import json
 
-#url = 'https://sandbox-api.uber.com/v1.2/estimates/price'
 url = 'https://api.uber.com/v1.2/estimates/price'
-
-#start_lat = 21.3088619
-#start_lng = -157.8086674
-#end_lat = 21.2965912
-#end_lng =  -157.8564657
-
-
+#Calling out the server for costs
 def uber_price(start_lat, start_lng, end_lat, end_lng):
 	parameters = {
 	  'server_token': 'vsfheclyaHjkKaaKxdqlEABOB2IwXT0j6KoDP1FE',
@@ -20,13 +13,13 @@ def uber_price(start_lat, start_lng, end_lat, end_lng):
 	}
 	response = requests.get(url, params=parameters)
 	data = json.loads(response.text)
-	#print json.dumps(data)
+
 	for i in data["prices"]:
 		if (i["localized_display_name"]== "uberX"):
 			price = float(i["low_estimate"])
 			distance = float(i["distance"])
 	return price
-
+#For distance 
 def uber_distance(start_lat, start_lng, end_lat, end_lng):
 	parameters = {
 	  'server_token': 'vsfheclyaHjkKaaKxdqlEABOB2IwXT0j6KoDP1FE',
@@ -37,7 +30,7 @@ def uber_distance(start_lat, start_lng, end_lat, end_lng):
 	}
 	response = requests.get(url, params=parameters)
 	data = json.loads(response.text)
-	#print json.dumps(data)
+
 	for i in data["prices"]:
 		if (i["localized_display_name"]== "uberX"):
 			price = float(i["low_estimate"])
@@ -45,7 +38,7 @@ def uber_distance(start_lat, start_lng, end_lat, end_lng):
 			duration = float(i["duration"]/60)
 
 	return distance
-
+#For ride duration
 def uber_duration(start_lat, start_lng, end_lat, end_lng):
 	parameters = {
 	  'server_token': 'vsfheclyaHjkKaaKxdqlEABOB2IwXT0j6KoDP1FE',
@@ -56,10 +49,8 @@ def uber_duration(start_lat, start_lng, end_lat, end_lng):
 	}
 	response = requests.get(url, params=parameters)
 	data = json.loads(response.text)
-	#print json.dumps(data)
+
 	for i in data["prices"]:
 		if (i["localized_display_name"]== "uberX"):
 			duration = float(i["duration"]/60)
 	return duration
-#x = uber_price(start_lat, start_lng, end_lat, end_lng)
-#print x

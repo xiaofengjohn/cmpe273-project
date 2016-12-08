@@ -36,8 +36,7 @@ class TSP:
             self.initstoreMap()  
             self.DP(self.length - 2)
             finish = clock()
-   #         print("TSP functions running time: " + str(finish-start) + "seconds")
-            
+  
     def check(self, dArray):  
         if (len(dArray) < 3):  
             print("The number of visiting places is less than 2. Could directly count the cost!")  
@@ -112,7 +111,7 @@ class TSP:
             listString.append(string[i: i + self.lengthOfLength])
             i += self.lengthOfLength
           
-        #If there is the same string then false  
+        #Returns false if there is a same string  
         i = 0
         while(i < (self.length - 1)):
             j = i + 1
@@ -122,14 +121,14 @@ class TSP:
                 j += 1
             i += 1
         
-        #if it is the value on the matrix diagonal, then false
+        #Returns false if value is from the matrix
         i = 0
         while(i < len(listString)):
             if(int(listString[i]) == i):
                 return False
             i += 1
          
-        # make sure every city has been traveled  
+       
         map = defaultdict(int)
         i = 0
         while(i < self.length):
@@ -232,15 +231,7 @@ class TSP:
     
 
 if __name__ == '__main__':
-#    multilist = [[0 for col in range(6)] for row in range(6)]
-##    cityArray = [[0, 2, 1, 3, 4, 5, 5, 6],  
-##            [1, 0, 4, 4, 2, 5, 5, 6],  
-##            [5, 4, 0, 2, 2, 6, 5, 6],  
-##            [5, 2, 2, 0, 3, 2, 5, 6],  
-##            [4, 2, 4, 2, 0, 3, 5, 6],  
-##            [4, 2, 4, 2, 3, 0, 5, 6],  
-##            [4, 2, 4, 2, 4, 3, 0, 6],  
-##            [4, 2, 4, 2, 8, 3, 5, 0]]
+
     cityArray = [[0,10,20,30,40,50],
                  [12,0,18,30,25,21],
                  [23,19,0,5,10,15],

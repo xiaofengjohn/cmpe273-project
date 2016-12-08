@@ -41,6 +41,7 @@ def post():
 	except IntegrityError:
 		return json.dumps({'status':False})
 
+#Retrieving every listed location
 @app.route('/locations',methods =['GET'])
 def findAll():
 	try:
@@ -52,6 +53,7 @@ def findAll():
 	except IntegrityError:
 		return json.dumps({'status':False})
 
+#Retrieving location/'s based on their id/'s
 @app.route('/locations/<location_id>',methods =['GET'])
 def get_locationID(location_id):
 	try:
@@ -60,6 +62,7 @@ def get_locationID(location_id):
 	except IntegrityError:
 		return json.dumps({'status':False})
 
+#Updating location/'s based on their id/'s
 @app.route('/locations/<location_id>',methods=['PUT'])
 def update_locationID(location_id):
 	try:
@@ -76,6 +79,7 @@ def update_locationID(location_id):
 	except IntegrityError:
 		return json.dumps({'status':False})
 
+#Deleting location/'s based on their id/'s
 @app.route('/locations/<location_id>',methods=['DELETE'])
 def delete_location(location_id):
 	db.session.delete(Location_API.query.get(location_id))
