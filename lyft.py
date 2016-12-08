@@ -83,4 +83,9 @@ class lyft:
 
         return duration
 
+#a = lyft()
+#x = a.lyft_price(start_lat,start_lng,end_lat,end_lng)
+#y = a.lyft_distance(start_lat,start_lng,end_lat,end_lng)
+#z = a.lyft_duration(start_lat,start_lng,end_lat,end_lng)
+#print x, y , z
 
