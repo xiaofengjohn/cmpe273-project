@@ -81,11 +81,11 @@
             <el-col :span="12">
                 <div class="left-content content" style="position: relative;"
                 :style="{backgroundColor: lyftTripQuery.total_costs_by_cheapest_car_type > uberTripQuery.total_costs_by_cheapest_car_type ? '#F9FAFC' : '#FFF'}">
-                	<div style="position: absolute; left: 20px; top: 10px;">
+                	<div style="position: absolute; left: 20px; top: 40px;">
                 		<img src="https://www.seeklogo.net/wp-content/uploads/2015/08/uber-logo-vector-download.jpg" style="width: 100px;">
                 	</div>
-                	<div style="position: absolute; right: 20px; top: 10px;" v-if="lyftTripQuery.total_costs_by_cheapest_car_type > uberTripQuery.total_costs_by_cheapest_car_type">
-                		<%getRouter%>
+                	<div style="position: absolute; left: 20px; top: 20px;" v-if="lyftTripQuery.total_costs_by_cheapest_car_type > uberTripQuery.total_costs_by_cheapest_car_type">
+                		<h4><%getRouter%></h4>
                 	</div>
              		<div style="margin: 150px" v-if="uberTripQuery">
              			
@@ -93,9 +93,9 @@
              				<li>name: <%uberTripQuery.name%></li>
              				<li>total_duration: <%uberTripQuery.total_duration%></li>
              				<li>duration_unit: <%uberTripQuery.duration_unit%></li>
+             				<li>total_distance: <%uberTripQuery.total_distance%></li>
              				<li>distance_unit: <%uberTripQuery.distance_unit%></li>
              				<li>total_costs_by_cheapest_car_type: <%uberTripQuery.total_costs_by_cheapest_car_type%></li>
-             				<li>total_distance: <%uberTripQuery.total_distance%></li>
              				<li>currency_code: <%uberTripQuery.currency_code%></li>
              			</ul>
              		</div>
@@ -104,11 +104,11 @@
             <el-col :span="12">
                 <div class="right-content content" style="position: relative;" 
                 :style="{backgroundColor: lyftTripQuery.total_costs_by_cheapest_car_type < uberTripQuery.total_costs_by_cheapest_car_type ? '#F9FAFC' : '#FFF'}">
-                	<div style="position: absolute; left: 50px; top: 30px;">
+                	<div style="position: absolute; left: 50px; top: 40px;">
                 		<img src="http://thepowershot.com/wp-content/uploads/2015/10/lyft-logo-facebook.jpg" style="width: 60px;">
                 	</div>
-                	<div style="position: absolute; right: 20px; top: 10px;" v-if="lyftTripQuery.total_costs_by_cheapest_car_type < uberTripQuery.total_costs_by_cheapest_car_type">
-                		<%getRouter%>
+                	<div style="position: absolute; left: 20px; top: 20px;" v-if="lyftTripQuery.total_costs_by_cheapest_car_type < uberTripQuery.total_costs_by_cheapest_car_type">
+                		<h4><%getRouter%></h4>
                 	</div>
                 	<div style="margin: 150px;" v-if="lyftTripQuery">
              			
@@ -116,9 +116,9 @@
              				<li>name: <%lyftTripQuery.name%></li>
              				<li>total_duration: <%lyftTripQuery.total_duration%></li>
              				<li>duration_unit: <%lyftTripQuery.duration_unit%></li>
+             				<li>total_distance: <%lyftTripQuery.total_distance%></li>
              				<li>distance_unit: <%lyftTripQuery.distance_unit%></li>
              				<li>total_costs_by_cheapest_car_type: <%lyftTripQuery.total_costs_by_cheapest_car_type%></li>
-             				<li>total_distance: <%lyftTripQuery.total_distance%></li>
              				<li>currency_code: <%lyftTripQuery.currency_code%></li>
              			</ul>
              			
@@ -204,7 +204,7 @@ new Vue({
 	  },
 
 	  getRouter: function() {
-	  	var res = "";
+	  	var res = "BEST ROUTE: ";
 	  	res += this.tripQuery.start + " --> ";
 	  	if (this.tripQuery && this.tripQuery.best_route_by_costs) {
 	  		for (var i of this.tripQuery.best_route_by_costs) {
@@ -497,7 +497,7 @@ new Vue({
 .list {
     padding: 10px 10px 10px 10px;
     border: 1px solid #eaeefb;
-    font-size: 16px;
+    font-size: 12px;
     overflow: hidden;
 }
 
